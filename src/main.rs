@@ -1,11 +1,8 @@
 use std::{fmt::{Display, Formatter, Error}, env};
 
-fn parse_u32(s: String) -> Result<u32, ParseError> {
-    match s.parse() {
-        Err(_) => Err(ParseError::InvalidInteger(s)),
-        Ok(x) => Ok(x),
-    }
-}
+mod parse_args;
+use parse_args::{ParseError, ParseArgs, parse_u32};
+// mod parse_args;
 
 #[derive(Debug)]
 enum VertDir {
@@ -32,62 +29,15 @@ struct Frame {
     height: u32,
 }
 
-#[derive(Debug)]
-enum ParseError {
-    TooFewArgs,
-    TooManyArgs,
-    InvalidInteger(String),
-}
-
-struct ParseArgs(std::env::Args);
-
-impl ParseArgs {
-    fn new() -> ParseArgs {
-        ParseArgs(std::env::args())
-    }
-
-    fn require_arg(&mut self) -> Result<String, ParseError> {
-        match self.0.next() {
-            Some(x) => Ok(x),
-            None => Err(ParseError::TooFewArgs)
-        }
-    }
-
-    fn require_no_arg(&mut self) -> Result<String, ParseError> {
-        match self.0.next() {
-            Some(_) => Err(ParseError::TooManyArgs),
-            None => Ok("".to_owned()),
-        }
-    }
-}
-
-fn parse_args() -> Result<Frame, ParseError> {
-    let mut args = ParseArgs::new();
-
-    // skip the command name
-    let _command_name = args.require_arg()?;
-
-    let width_str = args.require_arg()?;
-    let height_str = args.require_arg()?;
-    args.require_no_arg()?;
-    let width = parse_u32(width_str)?;
-    let height = parse_u32(height_str)?;
-
-    Ok(Frame { width, height })
-}
-
 struct Game {
     frame: Frame,
     ball: Ball,
 }
 
 impl Game {
-    fn new() -> Game {
+    fn new(frame: Frame) -> Game {
         Game {
-            frame: Frame {
-                width: 12,
-                height: 7,
-            },
+            frame,
             ball: Ball {
                 x: 4,
                 y: 4,
@@ -170,20 +120,36 @@ impl Ball {
 }
 
 
+fn parse_args() -> Result<Frame, ParseError> {
+    let mut args = ParseArgs::new();
+
+    // skip the command name
+    let _command_name = args.require_arg()?;
+
+    let width_str = args.require_arg()?;
+    let height_str = args.require_arg()?;
+    args.require_no_arg()?;
+    let width = parse_u32(width_str)?;
+    let height = parse_u32(height_str)?;
+
+    Ok(Frame { width, height })
+}
 
 
 fn main() -> Result<(), ParseError>{
-    // let mut args = env::args();
-    // for arg in std::env::args().skip(1) {
-    //     println!("{:?}", arg.parse::<u32>());
-    // }
-    parse_args()?;
-    let mut g = Game::new();
-    let sleep_duration = std::time::Duration::from_millis(630);
-    loop {
-        println!("{}", g);
-        g.step();
-        std::thread::sleep(sleep_duration); 
+    match parse_args() {
+        Err(e) => {
+            return Err(e)
+        },
+        Ok(frame) => {
+            let mut game = Game::new(frame);
+            let sleep_duration = std::time::Duration::from_millis(500);
+            loop {
+                println!("{}", game);
+                game.step();
+                std::thread::sleep(sleep_duration);
+            }
+        }
     }
     
 }

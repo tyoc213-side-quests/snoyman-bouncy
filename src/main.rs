@@ -1,4 +1,4 @@
-use std::fmt::{Display, Formatter};
+use std::{fmt::{Display, Formatter, Error}, env};
 
 #[derive(Debug)]
 enum VertDir {
@@ -20,10 +20,49 @@ struct Ball {
 }
 
 #[derive(Debug)]
-
 struct Frame {
     width: u32,
     height: u32,
+}
+
+#[derive(Debug)]
+enum ParseError {
+    TooFewArgs,
+    TooManyArgs,
+    InvalidInteger(String),
+}
+
+fn parse_args() -> Result<Frame, ParseError> {
+    use self::ParseError::*;
+
+    let mut args = env::args().skip(1);
+
+    let width = match args.next() {
+        None => return Err(TooFewArgs),
+        Some(x) => x,
+    };
+
+    let heigth = match args.next() {
+        None => return Err(TooFewArgs),
+        Some(x) => x,
+    };
+
+    match args.next() {
+        None => (),
+        Some(x) => return Err(TooManyArgs),
+    };
+
+    let width = match width.parse::<u32>() {
+        Err(_) => return Err(InvalidInteger(width)),
+        Ok(x) => x,
+    };
+
+    let height = match heigth.parse() {
+        Err(_) => return Err(InvalidInteger(heigth)),
+        Ok(x) => x,
+    };
+
+    Ok(Frame { width, height })
 }
 
 struct Game {
@@ -120,7 +159,14 @@ impl Ball {
 }
 
 
-fn main() {
+
+
+fn main() -> Result<(), ParseError>{
+    // let mut args = env::args();
+    // for arg in std::env::args().skip(1) {
+    //     println!("{:?}", arg.parse::<u32>());
+    // }
+    parse_args()?;
     let mut g = Game::new();
     let sleep_duration = std::time::Duration::from_millis(630);
     loop {

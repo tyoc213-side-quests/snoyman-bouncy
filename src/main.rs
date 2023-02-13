@@ -1,5 +1,12 @@
 use std::{fmt::{Display, Formatter, Error}, env};
 
+fn parse_u32(s: String) -> Result<u32, ParseError> {
+    match s.parse() {
+        Err(_) => Err(ParseError::InvalidInteger(s)),
+        Ok(x) => Ok(x),
+    }
+}
+
 #[derive(Debug)]
 enum VertDir {
     Up,
@@ -32,35 +39,39 @@ enum ParseError {
     InvalidInteger(String),
 }
 
+struct ParseArgs(std::env::Args);
+
+impl ParseArgs {
+    fn new() -> ParseArgs {
+        ParseArgs(std::env::args())
+    }
+
+    fn require_arg(&mut self) -> Result<String, ParseError> {
+        match self.0.next() {
+            Some(x) => Ok(x),
+            None => Err(ParseError::TooFewArgs)
+        }
+    }
+
+    fn require_no_arg(&mut self) -> Result<String, ParseError> {
+        match self.0.next() {
+            Some(_) => Err(ParseError::TooManyArgs),
+            None => Ok("".to_owned()),
+        }
+    }
+}
+
 fn parse_args() -> Result<Frame, ParseError> {
-    use self::ParseError::*;
+    let mut args = ParseArgs::new();
 
-    let mut args = env::args().skip(1);
+    // skip the command name
+    let _command_name = args.require_arg()?;
 
-    let width = match args.next() {
-        None => return Err(TooFewArgs),
-        Some(x) => x,
-    };
-
-    let heigth = match args.next() {
-        None => return Err(TooFewArgs),
-        Some(x) => x,
-    };
-
-    match args.next() {
-        None => (),
-        Some(x) => return Err(TooManyArgs),
-    };
-
-    let width = match width.parse::<u32>() {
-        Err(_) => return Err(InvalidInteger(width)),
-        Ok(x) => x,
-    };
-
-    let height = match heigth.parse() {
-        Err(_) => return Err(InvalidInteger(heigth)),
-        Ok(x) => x,
-    };
+    let width_str = args.require_arg()?;
+    let height_str = args.require_arg()?;
+    args.require_no_arg()?;
+    let width = parse_u32(width_str)?;
+    let height = parse_u32(height_str)?;
 
     Ok(Frame { width, height })
 }

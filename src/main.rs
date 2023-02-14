@@ -24,7 +24,7 @@ struct Ball {
 }
 
 #[derive(Debug)]
-pub struct Frame {
+struct Frame {
     width: u32,
     height: u32,
 }
@@ -121,8 +121,8 @@ impl Ball {
 
 
 fn main() -> Result<(), ParseError>{
-    let frame = parse_args()?;
-    let mut game = Game::new(frame);
+    let (width, height) = parse_args()?;
+    let mut game = Game::new(Frame { width, height });
     let sleep_duration = std::time::Duration::from_millis(500);
     loop {
         println!("{}", game);

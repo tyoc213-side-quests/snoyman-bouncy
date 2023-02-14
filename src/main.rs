@@ -137,19 +137,12 @@ fn parse_args() -> Result<Frame, ParseError> {
 
 
 fn main() -> Result<(), ParseError>{
-    match parse_args() {
-        Err(e) => {
-            return Err(e)
-        },
-        Ok(frame) => {
-            let mut game = Game::new(frame);
-            let sleep_duration = std::time::Duration::from_millis(500);
-            loop {
-                println!("{}", game);
-                game.step();
-                std::thread::sleep(sleep_duration);
-            }
-        }
+    let frame = parse_args()?;
+    let mut game = Game::new(frame);
+    let sleep_duration = std::time::Duration::from_millis(500);
+    loop {
+        println!("{}", game);
+        game.step();
+        std::thread::sleep(sleep_duration);
     }
-    
 }

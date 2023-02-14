@@ -1,7 +1,7 @@
 use std::{fmt::{Display, Formatter,}};
 
 mod parse_args;
-use parse_args::{ParseError, ParseArgs, parse_u32};
+use parse_args::{ParseError, parse_args};
 // mod parse_args;
 
 #[derive(Debug)]
@@ -24,7 +24,7 @@ struct Ball {
 }
 
 #[derive(Debug)]
-struct Frame {
+pub struct Frame {
     width: u32,
     height: u32,
 }
@@ -117,22 +117,6 @@ impl Ball {
             VertDir::Down => self.y += 1,
         }
     }
-}
-
-
-fn parse_args() -> Result<Frame, ParseError> {
-    let mut args = ParseArgs::new();
-
-    // skip the command name
-    let _command_name = args.require_arg()?;
-
-    let width_str = args.require_arg()?;
-    let height_str = args.require_arg()?;
-    args.require_no_arg()?;
-    let width = parse_u32(width_str)?;
-    let height = parse_u32(height_str)?;
-
-    Ok(Frame { width, height })
 }
 
 

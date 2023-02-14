@@ -1,3 +1,5 @@
+use crate::Frame;
+
 #[derive(Debug)]
 pub enum ParseError {
     TooFewArgs,
@@ -36,3 +38,18 @@ pub fn parse_u32(s: String) -> Result<u32, ParseError> {
     }
 }
 
+
+pub fn parse_args() -> Result<Frame, ParseError> {
+    let mut args = ParseArgs::new();
+
+    // skip the command name
+    let _command_name = args.require_arg()?;
+
+    let width_str = args.require_arg()?;
+    let height_str = args.require_arg()?;
+    args.require_no_arg()?;
+    let width = parse_u32(width_str)?;
+    let height = parse_u32(height_str)?;
+
+    Ok(Frame { width, height })
+}

@@ -1,4 +1,4 @@
-use std::{fmt::{Display, Formatter, Error}, env};
+use std::{fmt::{Display, Formatter,}};
 
 mod parse_args;
 use parse_args::{ParseError, ParseArgs, parse_u32};
@@ -65,9 +65,9 @@ impl Display for Game {
         // }
         // write!(fmt, "+\n")
         let top_bottom = |fmt: &mut Formatter| {
-            write!(fmt, "+");
+            write!(fmt, "+")?;
             for _ in 0..self.frame.width {
-                write!(fmt, "-");
+                write!(fmt, "-")?;
             }
             write!(fmt, "+\n")
         };
@@ -82,9 +82,9 @@ impl Display for Game {
                 } else {
                     ' '
                 };
-                write!(fmt, "{}", c);
+                write!(fmt, "{}", c)?;
             }
-            let _r3 = write!(fmt, "|\n");
+            write!(fmt, "|\n")?;
         }
         let _r4 = top_bottom(&mut fmt);
         _r4

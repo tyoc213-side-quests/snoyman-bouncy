@@ -32,7 +32,7 @@ impl ParseArgs {
 pub fn parse_u32(s: String) -> Result<u32, ParseError> {
     match s.parse() {
         Err(_) => Err(ParseError::InvalidInteger(s)),
-        Ok(x) => if x > 3 {Ok(x)} else {Err(ParseError::NumberToLow((x)))},
+        Ok(x) => if x > 3 {Ok(x)} else {Err(ParseError::NumberToLow(x))},
     }
 }
 

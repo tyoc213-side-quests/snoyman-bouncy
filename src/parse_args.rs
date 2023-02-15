@@ -3,7 +3,8 @@ pub enum ParseError {
     TooFewArgs,
     TooManyArgs,
     InvalidInteger(String),
-    NumberToLow(u32),
+    WidthTooSmall(u32),
+    HeightTooSmall(u32),
 }
 
 pub struct ParseArgs(std::env::Args);
@@ -32,7 +33,7 @@ impl ParseArgs {
 pub fn parse_u32(s: String) -> Result<u32, ParseError> {
     match s.parse() {
         Err(_) => Err(ParseError::InvalidInteger(s)),
-        Ok(x) => if x > 3 {Ok(x)} else {Err(ParseError::NumberToLow(x))},
+        Ok(x) => Ok(x),
     }
 }
 
@@ -48,6 +49,14 @@ pub fn parse_args() -> Result<(u32, u32), ParseError> {
     args.require_no_arg()?;
     let width = parse_u32(width_str)?;
     let height = parse_u32(height_str)?;
+
+    if width < 4 {
+        return Err(ParseError::WidthTooSmall(width));
+    }
+
+    if height < 4 {
+        return Err(ParseError::WidthTooSmall(height));
+    }
 
     Ok((width, height))
 }

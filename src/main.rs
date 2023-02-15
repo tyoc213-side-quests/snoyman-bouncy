@@ -1,3 +1,5 @@
+extern crate pancurses;
+
 use std::{fmt::{Display, Formatter,}};
 
 mod parse_args;
@@ -119,13 +121,34 @@ impl Ball {
     }
 }
 
+struct Empty;
 
-fn main() -> Result<(), ParseError>{
+impl Iterator for Empty {
+    type Item=u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}
+
+fn main() {
+    for i in Empty {
+        panic!("Wait, this shouldn't happen!");
+    }
+    println!("All done!");
+}
+
+fn main2() -> Result<(), ParseError>{
+    let window = pancurses::initscr();
+    let (max_x, max_y) = window.get_max_yx();
+    let frame = Frame{width: max_x as u32, height: max_y as u32};
     let (width, height) = parse_args()?;
     let mut game = Game::new(Frame { width, height });
     let sleep_duration = std::time::Duration::from_millis(500);
     loop {
-        println!("{}", game);
+        window.clear();
+        window.printw(game.to_string());
+        window.refresh();
         game.step();
         std::thread::sleep(sleep_duration);
     }

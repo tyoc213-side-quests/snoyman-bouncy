@@ -121,20 +121,68 @@ impl Ball {
     }
 }
 
-struct Empty;
+struct Empty(u32);
 
 impl Iterator for Empty {
     type Item=u32;
 
     fn next(&mut self) -> Option<Self::Item> {
-        Some(42)
+        self.0 += 1;
+        Some(self.0)
+    }
+}
+
+struct OneToTen(u32);
+
+fn one_to_ten() -> OneToTen {
+    OneToTen(1)
+}
+
+impl Iterator for OneToTen {
+    type Item=u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.0 > 10 {
+            None
+        } else {
+            let res = Some(self.0);
+            self.0 += 1;
+            res
+        }
+    }
+}
+
+struct Fibonacci(u32, u32);
+
+fn fibo() -> Fibonacci {
+    Fibonacci(1, 1)
+}
+
+impl Iterator for Fibonacci {
+    type Item=u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let sum = self.0+self.1;
+        let res = Some(self.0+self.1);
+        self.0 = self.1;
+        self.1 = sum;
+        res
     }
 }
 
 fn main() {
-    for i in Empty.take(10) {
+    for i in Empty(33).take(10) {
         println!("The answer to life, the universe, and everything is {}", i);
     }
+
+    for i in one_to_ten() {
+        println!("The answer to life, the universe, and everything is {}", i);
+    }
+
+    for i in fibo().take(10) {
+        println!("fibo {}", i);
+    }
+
     println!("All done!");
 }
 

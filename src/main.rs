@@ -191,6 +191,14 @@ fn do_sum<I>(a:I, b:I) -> I
     a+b
 }
 
+fn do_sum_fancy<I>(iter: I) -> I::Item
+    where
+    I: Iterator,
+    I::Item: std::ops::Add<Output=I::Item> + From<u8>,
+{
+    iter.fold(From::from(0u8), std::ops::Add::add)
+}
+
 fn main() {
     for i in Empty(33).take(10) {
         println!("The answer to life, the universe, and everything is {}", i);
@@ -224,8 +232,17 @@ fn main() {
     let c: Vec<i32> = (1..11).collect();
     println!("collect {c:?}");
 
+    let s = (1..11).fold(100, |x,y| x+y);
+    println!("x+y={s:?}");
+
     let s = (1..11).fold(100, |x,y| do_sum(x, y));
     println!("sum={s:?}");
+
+    let s = do_sum_fancy(1..11);
+    println!("sum fancy={s:?}");
+
+    let res = (1..11).fold(0, std::ops::Add::add);
+    println!("std sum{}", res);
 
     println!("All done!");
 }

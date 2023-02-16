@@ -176,11 +176,12 @@ struct Doubler<I> {
 
 impl<I> Iterator for Doubler<I>
     where
-    I: Iterator<Item=u32> {
-    type Item = u32;
+    I: Iterator,
+    I::Item: std::ops::Mul<Output = I::Item> + From<u8> {
+    type Item = I::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next().map_or_else(|| None, |n| Some(n*2))
+        self.iter.next().map_or_else(|| None, |n| Some(n*From::from(2u8)))
     }
 }
 
@@ -197,7 +198,7 @@ fn main() {
         println!("fibo {}", i);
     }
 
-    let orig = 1..10; // array indices start at 1
+    let orig = 1u32..10; // array indices start at 1
     let double_iter = Doubler {
         iter: orig,
     };

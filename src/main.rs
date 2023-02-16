@@ -185,6 +185,12 @@ impl<I> Iterator for Doubler<I>
     }
 }
 
+fn do_sum<I>(a:I, b:I) -> I 
+    where
+    I: std::ops::Add<Output = I>{
+    a+b
+}
+
 fn main() {
     for i in Empty(33).take(10) {
         println!("The answer to life, the universe, and everything is {}", i);
@@ -218,7 +224,7 @@ fn main() {
     let c: Vec<i32> = (1..11).collect();
     println!("collect {c:?}");
 
-    let s = (1..11).fold(100, |x,y| x+y);
+    let s = (1..11).fold(100, |x,y| do_sum(x, y));
     println!("sum={s:?}");
 
     println!("All done!");

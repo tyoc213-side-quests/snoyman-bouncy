@@ -174,7 +174,9 @@ struct Doubler<I> {
     iter:I
 }
 
-impl<I:Iterator<Item=u32>> Iterator for Doubler<I> {
+impl<I> Iterator for Doubler<I>
+    where
+    I: Iterator<Item=u32> {
     type Item = u32;
 
     fn next(&mut self) -> Option<Self::Item> {

@@ -170,6 +170,18 @@ impl Iterator for Fibonacci {
     }
 }
 
+struct Doubler<I> {
+    iter:I
+}
+
+impl<I:Iterator<Item=u32>> Iterator for Doubler<I> {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map_or_else(|| None, |n| Some(n*2))
+    }
+}
+
 fn main() {
     for i in Empty(33).take(10) {
         println!("The answer to life, the universe, and everything is {}", i);
@@ -181,6 +193,14 @@ fn main() {
 
     for i in fibo().take(10) {
         println!("fibo {}", i);
+    }
+
+    let orig = 1..10; // array indices start at 1
+    let double_iter = Doubler {
+        iter: orig,
+    };
+    for i in double_iter {
+        println!("double {:?}", i);
     }
 
     println!("All done!");

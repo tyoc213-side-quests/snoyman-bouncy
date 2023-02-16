@@ -214,6 +214,13 @@ fn main() {
         println!("skip map filter {}", i);
     }
 
+    // collect things
+    let c: Vec<i32> = (1..11).collect();
+    println!("collect {c:?}");
+
+    let s = (1..11).fold(100, |x,y| x+y);
+    println!("sum={s:?}");
+
     println!("All done!");
 }
 

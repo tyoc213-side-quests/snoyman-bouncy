@@ -206,6 +206,14 @@ fn main() {
         println!("double {:?}", i);
     }
 
+    for i in (1..11).map(|x| x*2) {
+        println!("doblesillo {}", i);
+    }
+
+    for i in (1..11).skip(3).map(|x| x+1).filter(|x| x%2==0) {
+        println!("skip map filter {}", i);
+    }
+
     println!("All done!");
 }
 

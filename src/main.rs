@@ -221,12 +221,33 @@ impl Iterator for InfiniteUnitIter{
     }
 }
 
+struct InfiniteUnit2;
+
+impl IntoIterator for InfiniteUnit2 {
+    type Item=();
+
+    type IntoIter=std::iter::Repeat<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        std::iter::repeat(())
+    }
+}
+
 fn main() {
     let mut count = 0;
     for _ in InfiniteUnit {
         count += 1;
         println!("count == {}", count);
         if count >= 5 {
+            break;
+        }
+    }
+
+    let mut count2 = 0;
+    for _ in InfiniteUnit2 {
+        count2 += 1;
+        println!("count2 == {}", count2);
+        if count2 >= 5 {
             break;
         }
     }

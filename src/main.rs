@@ -1,6 +1,6 @@
 extern crate pancurses;
 
-use std::{fmt::{Display, Formatter,}};
+use std::{fmt::{Display, Formatter,}, option::IntoIter};
 
 mod parse_args;
 use parse_args::{ParseError, parse_args};
@@ -199,7 +199,40 @@ fn do_sum_fancy<I>(iter: I) -> I::Item
     iter.fold(From::from(0u8), std::ops::Add::add)
 }
 
+struct InfiniteUnit;
+
+impl IntoIterator for InfiniteUnit{
+    type Item=();
+
+    type IntoIter = InfiniteUnitIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        InfiniteUnitIter
+    }
+}
+
+struct InfiniteUnitIter;
+
+impl Iterator for InfiniteUnitIter{
+    type Item = ();
+
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(())
+    }
+}
+
 fn main() {
+    let mut count = 0;
+    for _ in InfiniteUnit {
+        count += 1;
+        println!("count == {}", count);
+        if count >= 5 {
+            break;
+        }
+    }
+}
+
+fn main_iters() {
     for i in Empty(33).take(10) {
         println!("The answer to life, the universe, and everything is {}", i);
     }

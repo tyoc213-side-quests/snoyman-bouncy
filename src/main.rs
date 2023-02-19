@@ -26,7 +26,20 @@ fn main() {
     call_fn(say_hi);
     call_fn_mut(say_hi);
     call_fn_once(say_hi);
+    main_move();
 }
+
+fn main_move() {
+    let say_hi = {
+        let name = String::from("Alice");
+        move || println!("Hello, {}", name)
+    };
+    call_fn(&say_hi);call_fn(&say_hi);call_fn(&say_hi);
+    call_fn_mut(&say_hi);call_fn_mut(&say_hi);call_fn_mut(&say_hi);
+    call_fn_once(&say_hi);call_fn_once(&say_hi);call_fn_once(&say_hi);
+}
+
+
 #[derive(Debug)]
 enum VertDir {
     Up,

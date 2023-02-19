@@ -27,6 +27,9 @@ fn main() {
     call_fn_mut(say_hi);
     call_fn_once(say_hi);
     main_move();
+    main_drop();
+    main_capture_mutable_reference();
+    main_double_by_iter();
 }
 
 fn main_move() {
@@ -37,6 +40,41 @@ fn main_move() {
     call_fn(&say_hi);call_fn(&say_hi);call_fn(&say_hi);
     call_fn_mut(&say_hi);call_fn_mut(&say_hi);call_fn_mut(&say_hi);
     call_fn_once(&say_hi);call_fn_once(&say_hi);call_fn_once(&say_hi);
+}
+
+
+fn main_drop() {
+    let say_hi = {
+        let name = String::from("Alice drop");
+        || std::mem::drop(name)
+    };
+    //call_fn(say_hi);
+    //call_fn_mut(say_hi);
+    call_fn_once(say_hi);
+}
+
+fn main_capture_mutable_reference() {
+    let mut say_hi = {
+        let mut name = String::from("Alice");
+        move || {
+            name += " and Bob";
+            println!("Hello, {}", name);
+        }
+    };
+    // !!!: this is no longer possible
+    //call_fn(say_hi);
+    call_fn_mut(&mut say_hi);call_fn_mut(&mut say_hi);call_fn_mut(&mut say_hi);
+    call_fn_once(&mut say_hi);call_fn_once(&mut say_hi);call_fn_once(&mut say_hi);
+}
+
+fn main_double_by_iter() {
+    let nums: Vec<u32> = (1..11).collect();
+
+    for _ in 1..3 {
+        for i in nums.iter().map(|x| x * 2) {
+            println!("{}", i);
+        }
+    }
 }
 
 

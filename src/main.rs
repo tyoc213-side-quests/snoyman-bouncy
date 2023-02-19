@@ -6,6 +6,27 @@ mod parse_args;
 use parse_args::{ParseError, parse_args};
 // mod parse_args;
 
+
+
+fn call_fn<F>(f: F) where F: Fn() {
+    f()
+}
+
+fn call_fn_mut<F>(mut f: F) where F: FnMut() {
+    f()
+}
+
+fn call_fn_once<F>(f: F) where F: FnOnce() {
+    f()
+}
+
+fn main() {
+    let name = String::from("Alice");
+    let say_hi = || println!("Hello, {}", name);
+    call_fn(say_hi);
+    call_fn_mut(say_hi);
+    call_fn_once(say_hi);
+}
 #[derive(Debug)]
 enum VertDir {
     Up,
@@ -233,7 +254,7 @@ impl IntoIterator for InfiniteUnit2 {
     }
 }
 
-fn main() {
+fn main_iterators() {
     let mut count = 0;
     for _ in InfiniteUnit {
         count += 1;
